@@ -4,7 +4,7 @@ import matter from 'gray-matter'
 import remark from 'remark'
 import html from 'remark-html'
 
-export async function getPostData(id) {
+export async function getPostData(id: string) {
   const fullPath = path.join(postsDirectory, `${id}.md`)
   const fileContents = fs.readFileSync(fullPath, 'utf8')
 
@@ -42,7 +42,7 @@ export async function getSortedPostsData() {
   // Combine the data with the id
   return {
     id,
-    ...matterResult.data
+    ...(matterResult.data as { date: string, title: string })
   }
   })
   // Sort posts by date
