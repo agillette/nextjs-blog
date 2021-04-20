@@ -2,22 +2,28 @@ import Head from 'next/head'
 import Layout, { siteTitle } from '../components/layout'
 import utilStyles from '../styles/utils.module.css'
 import { getSortedPostsData } from '../lib/posts'
+import { getRecentLinks } from '../lib/links'
 import Link from 'next/link'
 import Date from '../components/date'
 import { GetStaticProps } from 'next'
 
 export const getStaticProps: GetStaticProps = async () => {
   const allPostsData = await getSortedPostsData()
+  const recentLinksData = await getRecentLinks()
+  console.log('static props: ', recentLinksData)
   return {
     props: {
-      allPostsData
+      allPostsData,
+      recentLinksData
     }
   }
 }
 
 export default function Home({
-  allPostsData
+  allPostsData,
+  recentLinksData
 }: {
+  recentLinksData: any,
   allPostsData: {
     date: string
     title: string
@@ -31,25 +37,23 @@ export default function Home({
       </Head>
       <section className={utilStyles.headingMd}>
         <p>
-          I'm a software engineer with more than ten years of experience. I've{' '}
-          spent most of my career designing and building web applications in a variety{' '}
-          of languages and have worked across the entire stack.
+          Below you'll find some links that I have recently found interesting.{' '}
+          Many of them are related to software engineering because that's what{' '}
+          I do for a living. Find me on <Link href='https://github.com/agillette'>Github</Link>.
         </p>
       </section>
       <section className={`${utilStyles.headingMd} ${utilStyles.padding1px}`}>
-        <h2 className={utilStyles.headingLg}>Blog</h2>
+        <h2 className={utilStyles.headingLg}>Recently Bookmarked</h2>
         <ul className={utilStyles.list}>
-          {allPostsData.map(({ id, date, title }) => (
-            <li className={utilStyles.listItem} key={id}>
-              <Link href={`/posts/${id}`}>
-                <a>{title}</a>
-              </Link>
-              <br />
-              <small className={utilStyles.lightText}>
-                <Date dateString={date} />
-              </small>
-            </li>          
-          ))}
+        {recentLinksData.map(link => (
+          <li className={utilStyles.listItem} key={link.id}>
+            <Link href={link.url}>{link.title}</Link>
+            <br />
+            <small className={utilStyles.lightText}>
+              <Date dateString={link.date} />
+            </small>
+          </li>
+        ))}
         </ul>
       </section>
     </Layout>
